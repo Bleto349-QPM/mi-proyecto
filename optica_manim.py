@@ -261,7 +261,7 @@ class BaseProblemas(Scene):
         self.subtitulo_actual = None
         self.poner_subtitulo("1 · Datos del problema", SKY)
         tarjetas = VGroup(*[tarjeta_dato(k, v) for k, v in p["datos"]])
-        tarjetas.arrange_in_grid(cols=3, buff=(0.35, 0.35))
+        tarjetas.arrange_in_grid(cols=2 if len(tarjetas) == 4 else 3, buff=(0.35, 0.35))
         ajustar(tarjetas, 12.4, 4.6)
         tarjetas.move_to(DOWN * 0.7)
         self.play(LaggedStart(*[FadeIn(t, shift=UP * 0.2) for t in tarjetas], lag_ratio=0.25))
@@ -312,6 +312,7 @@ class BaseProblemas(Scene):
         self.play(*[Create(c) for c in cajas], run_time=1.2)
         self.play(*[Indicate(filas[i][1], color=GREEN_OK, scale_factor=1.05) for i in p["cajas"]])
         self.wait(3.5)
+        self.quitar_contenido()
 
     # --- bloques 3 y 4 ------------------------------------------------------
     def bloque_panel(self, subtitulo, color_sub, titulo, texto, color, color_titulo):
@@ -320,9 +321,17 @@ class BaseProblemas(Scene):
         self.play(FadeIn(pnl, shift=UP * 0.3), run_time=1.2)
         self.wait(max(7, len(texto) / 12))  # tiempo de lectura proporcional al texto
 
+    def quitar_contenido(self):
+        """Desvanece todo salvo el encabezado y el subtítulo vigentes."""
+        fijos = (self.encabezado, self.subtitulo_actual)
+        resto = [m for m in self.mobjects if not any(m is f for f in fijos)]
+        if resto:
+            self.play(FadeOut(*resto), run_time=0.8)
+
     def bloque_correcta(self, p):
         self.bloque_panel("3 · Explicación de la respuesta", GREEN_OK,
                           "Interpretación técnica correcta", p["correcta"], TEAL, GREEN_OK)
+        self.quitar_contenido()
 
     def bloque_errada(self, p):
         self.bloque_panel("4 · Si se interpreta mal…", AMBER,
