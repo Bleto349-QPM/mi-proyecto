@@ -17,6 +17,7 @@ Un problema por separado:
 
 Solo usa Text (no requiere LaTeX instalado).
 """
+import os
 import textwrap
 
 from manim import *
@@ -32,6 +33,8 @@ RED_BAD = "#EF4444"
 AMBER = "#F59E0B"
 YELLOW = "#FDE68A"
 CARD = "#1E293B"
+
+AUDIO_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "audio")
 
 config.background_color = BG
 config.pixel_width = 1920
@@ -241,6 +244,24 @@ def tarjeta_dato(etiqueta, valor):
 class BaseProblemas(Scene):
     def setup(self):
         self.camera.background_color = BG
+        self.fin_voz = 0.0
+
+    # --- narración (audio/<clave>.mp3, generado con generar_audio.py) --------
+    def hablar(self, clave):
+        ruta = os.path.join(AUDIO_DIR, f"{clave}.mp3")
+        if not os.path.exists(ruta):
+            return False
+        from pydub import AudioSegment
+        dur = AudioSegment.from_file(ruta).duration_seconds
+        self.add_sound(ruta)
+        self.fin_voz = self.renderer.time + dur + 0.5
+        return True
+
+    def esperar_voz(self):
+        """Espera hasta que termine la locución en curso (si la hay)."""
+        resto = self.fin_voz - self.renderer.time
+        if resto > 0:
+            self.wait(resto)
 
     # --- bloque 1 -----------------------------------------------------------
     def bloque_titulo_datos(self, p):
@@ -248,6 +269,7 @@ class BaseProblemas(Scene):
         sub = Text(p["titulo"], font_size=38, color=TXT)
         ajustar(sub, 12.4, 2)
         tg = VGroup(num, sub).arrange(DOWN, buff=0.4)
+        self.hablar(f"p{p['n']}_titulo")
         self.play(FadeIn(num, shift=UP * 0.3), run_time=1)
         self.play(Write(sub), run_time=1.5)
         self.wait(2)
@@ -266,6 +288,7 @@ class BaseProblemas(Scene):
         tarjetas.move_to(DOWN * 0.7)
         self.play(LaggedStart(*[FadeIn(t, shift=UP * 0.2) for t in tarjetas], lag_ratio=0.25))
         self.wait(4)
+        self.esperar_voz()
         self.play(FadeOut(tarjetas))
 
     def poner_subtitulo(self, texto, color):
@@ -299,10 +322,12 @@ class BaseProblemas(Scene):
             simbolicas.append(sim)
 
         for i, (fila, sim) in enumerate(zip(filas, simbolicas)):
+            self.hablar(f"p{p['n']}_paso{i}")
             self.play(FadeIn(fila[0], shift=RIGHT * 0.2), Write(sim), run_time=1.2)
             self.wait(1.5)  # leer la ecuación base
             self.play(ReplacementTransform(sim, fila[1]), run_time=1.6)  # sustitución numérica
             self.wait(1.8)
+            self.esperar_voz()
 
         cajas = [
             SurroundingRectangle(filas[i][1], color=GREEN_OK, buff=0.15, corner_radius=0.1,
@@ -315,11 +340,16 @@ class BaseProblemas(Scene):
         self.quitar_contenido()
 
     # --- bloques 3 y 4 ------------------------------------------------------
-    def bloque_panel(self, subtitulo, color_sub, titulo, texto, color, color_titulo):
+    def bloque_panel(self, subtitulo, color_sub, titulo, texto, color, color_titulo, clave):
         self.poner_subtitulo(subtitulo, color_sub)
         pnl = panel(titulo, texto, color, color_titulo).move_to(DOWN * 0.8)
+        con_voz = self.hablar(clave)
         self.play(FadeIn(pnl, shift=UP * 0.3), run_time=1.2)
-        self.wait(max(7, len(texto) / 12))  # tiempo de lectura proporcional al texto
+        if con_voz:
+            self.esperar_voz()
+            self.wait(1.5)
+        else:
+            self.wait(max(7, len(texto) / 12))  # tiempo de lectura proporcional al texto
 
     def quitar_contenido(self):
         """Desvanece todo salvo el encabezado y el subtítulo vigentes."""
@@ -330,13 +360,14 @@ class BaseProblemas(Scene):
 
     def bloque_correcta(self, p):
         self.bloque_panel("3 · Explicación de la respuesta", GREEN_OK,
-                          "Interpretación técnica correcta", p["correcta"], TEAL, GREEN_OK)
+                          "Interpretación técnica correcta", p["correcta"], TEAL, GREEN_OK,
+                          f"p{p['n']}_correcta")
         self.quitar_contenido()
 
     def bloque_errada(self, p):
         self.bloque_panel("4 · Si se interpreta mal…", AMBER,
                           "Consecuencia de una interpretación errada", p["errada"],
-                          RED_BAD, AMBER)
+                          RED_BAD, AMBER, f"p{p['n']}_errada")
 
     # --- bloque 5 -----------------------------------------------------------
     def bloque_transicion(self):
@@ -382,9 +413,11 @@ class VideoCompleto(BaseProblemas):
         sub = Text("Problemas 4, 5, 6 y 7 resueltos paso a paso", font_size=34, color=TXT)
         g = VGroup(intro, sub).arrange(DOWN, buff=0.4)
         ajustar(g, 12.4, 5)
+        self.hablar("intro")
         self.play(FadeIn(intro, shift=UP * 0.3))
         self.play(Write(sub))
         self.wait(2.5)
+        self.esperar_voz()
         self.play(FadeOut(g))
         self.wait(0.4)
 
