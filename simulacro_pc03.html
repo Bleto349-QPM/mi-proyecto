@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulacro PC03 Ópticas</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --text:#1c1f24; --muted:#5b6370; --line:#d5d9e0;
+  --accent:#b3121f; --accent-soft:#fbeaec; --field:#fbfcfd; --ok:#1d7a3e; --ok-soft:#e7f5ec;
+  --code:#f1f3f6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121417; --card:#1b1e23; --text:#e7e9ec; --muted:#a2a9b4; --line:#343a44;
+    --accent:#ff6b76; --accent-soft:#3a1e22; --field:#16191d; --ok:#5fd18a; --ok-soft:#183324;
+    --code:#22262c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121417; --card:#1b1e23; --text:#e7e9ec; --muted:#a2a9b4; --line:#343a44;
+  --accent:#ff6b76; --accent-soft:#3a1e22; --field:#16191d; --ok:#5fd18a; --ok-soft:#183324;
+  --code:#22262c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:16px}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:8px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.1rem}
+button{font:inherit;font-size:.9rem;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+h1{font-size:1.25rem;text-align:center;margin:8px 0 2px}
+.sub{text-align:center;color:var(--muted);margin:0}
+h2{font-size:1.1rem;margin:0 0 8px}
+h2 .pts{font-weight:400;font-style:italic;color:var(--muted);font-size:.95rem}
+.ident{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ident label{display:flex;flex-direction:column;font-size:.85rem;color:var(--muted)}
+input[type=text]{font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--text)}
+.opts label{display:flex;gap:10px;align-items:flex-start;padding:7px 9px;border-radius:8px;cursor:pointer}
+.opts label:hover{background:var(--accent-soft)}
+.opts input{margin-top:5px;accent-color:var(--accent)}
+.clear{font-size:.8rem;padding:3px 8px;margin-top:4px}
+ul.datos{margin:6px 0 10px;padding-left:20px}
+pre{background:var(--code);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:.88rem;margin:8px 0}
+.formtitle{font-weight:700;margin-top:10px}
+.box{border:1.5px solid var(--text);border-radius:6px;margin:14px 0;padding:10px}
+.box .bt{font-weight:700;margin-bottom:6px}
+.box .bt span{font-weight:400}
+textarea{width:100%;min-height:120px;resize:vertical;font:inherit;font-size:.95rem;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--field);color:var(--text)}
+textarea.lg{min-height:170px}
+.inline{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.inline input{width:110px}
+.note{font-size:.85rem;color:var(--muted)}
+#sol{display:none}
+#sol.show{display:block}
+.sol .card{border-color:var(--ok);background:var(--ok-soft)}
+.sol h2{color:var(--ok)}
+.saved{font-size:.8rem;color:var(--muted)}
+@media (max-width:560px){.ident{grid-template-columns:1fr}}
+@media print{
+  header.top,.noprint,#sol{display:none!important}
+  body{background:#fff;color:#000}
+  .card{border:none;padding:0;margin:10px 0;break-inside:avoid-page}
+  textarea{border:1px solid #999;min-height:160px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top noprint">
+  <div class="bar">
+    <div><span class="timer" id="timer">90:00</span> <button id="tbtn" class="primary">Iniciar tiempo</button></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button id="theme">Tema</button>
+      <button onclick="window.print()">Imprimir / PDF</button>
+      <button id="reset">Borrar todo</button>
+      <button id="showsol">Ver solucionario</button>
+    </div>
+  </div>
+  <div class="saved" id="saved">Tus respuestas se guardan automáticamente en este navegador.</div>
+</header>
+
+<div class="card">
+  <h1>SISTEMAS DE COMUNICACIONES ÓPTICAS</h1>
+  <p class="sub"><strong>Simulacro — Práctica Calificada 03</strong></p>
+  <p class="sub">Duración sugerida: 90 minutos · Puntaje total: 20 puntos</p>
+  <div class="ident" style="margin-top:14px">
+    <label>Alumno(a)<input type="text" data-k="nombre"></label>
+    <label>Código<input type="text" data-k="codigo"></label>
+    <label>Sección<input type="text" data-k="seccion"></label>
+    <label>Fecha<input type="text" data-k="fecha"></label>
+  </div>
+  <p style="margin-top:14px"><strong>Preguntas 1, 2 y 3:</strong> correcta 1 punto, incorrecta −0.5 puntos, en blanco 0 puntos.</p>
+</div>
+
+<!-- MCQ -->
+<div class="card">
+  <h2>Pregunta 1</h2>
+  <p>Un enlace de 60 km con láser DFB tiene, según el presupuesto óptico, un margen de 4.1 dB con detector PIN y de 10.1 dB con detector APD. El margen de ingeniería ya está incluido en la pérdida total. ¿Qué decisión es la más sustentada?</p>
+  <div class="opts" data-q="q1">
+    <label><input type="radio" name="q1" value="A">A. Usar APD porque todo enlace mayor de 40 km requiere APD.</label>
+    <label><input type="radio" name="q1" value="B">B. Usar PIN porque cumple la sensibilidad con margen, y el APD sería un sobrecosto sin beneficio técnico proporcional.</label>
+    <label><input type="radio" name="q1" value="C">C. Usar APD porque más margen siempre significa menos errores de bit, sin importar el costo.</label>
+    <label><input type="radio" name="q1" value="D">D. Usar PIN porque el láser DFB compensa automáticamente cualquier pérdida del enlace.</label>
+    <label><input type="radio" name="q1" value="E">E. Rechazar ambos porque un margen menor de 5 dB nunca es aceptable.</label>
+  </div>
+  <button class="clear noprint" data-clear="q1">Dejar en blanco</button>
+</div>
+
+<div class="card">
+  <h2>Pregunta 2</h2>
+  <p>En una red GPON, la fibra atenúa 0.35 dB/km a 1310 nm y 0.25 dB/km a 1490 nm. El splitter, los conectores y los empalmes tienen la misma pérdida en ambos sentidos. ¿Qué sentido suele limitar el presupuesto y por qué?</p>
+  <div class="opts" data-q="q2">
+    <label><input type="radio" name="q2" value="A">A. El descendente, porque la OLT transmite a más potencia.</label>
+    <label><input type="radio" name="q2" value="B">B. Ninguno, porque la trayectoria física es la misma y la pérdida no depende de la longitud de onda.</label>
+    <label><input type="radio" name="q2" value="C">C. El ascendente (1310 nm), porque la fibra atenúa más a esa longitud de onda y la pérdida total es mayor.</label>
+    <label><input type="radio" name="q2" value="D">D. El descendente (1490 nm), porque el splitter pierde más en ese sentido.</label>
+    <label><input type="radio" name="q2" value="E">E. El ascendente, porque la ONT siempre tiene detector APD.</label>
+  </div>
+  <button class="clear noprint" data-clear="q2">Dejar en blanco</button>
+</div>
+
+<div class="card">
+  <h2>Pregunta 3</h2>
+  <p>Un enlace de 10 Gb/s cumple el presupuesto de potencia con 6 dB de margen, pero falla la prueba de BER. El diagnóstico muestra un ensanchamiento por dispersión cromática mayor al permitido. El proveedor propone cambiar el PIN por un APD con 5 dB más de sensibilidad. ¿Qué respuesta es la más sólida?</p>
+  <div class="opts" data-q="q3">
+    <label><input type="radio" name="q3" value="A">A. Aceptar el APD, porque más sensibilidad reduce la dispersión.</label>
+    <label><input type="radio" name="q3" value="B">B. Aumentar la potencia del transmisor en 5 dB para compensar el ensanchamiento.</label>
+    <label><input type="radio" name="q3" value="C">C. No resolver el fallo con sensibilidad, sino revisar el ancho espectral del emisor, la tolerancia de dispersión o la compensación, y repetir la prueba de BER.</label>
+    <label><input type="radio" name="q3" value="D">D. Instalar un atenuador para reducir la potencia y así reducir la dispersión.</label>
+    <label><input type="radio" name="q3" value="E">E. Aceptar el enlace, porque si cumple la potencia, la BER no es relevante.</label>
+  </div>
+  <button class="clear noprint" data-clear="q3">Dejar en blanco</button>
+</div>
+
+<!-- P4 -->
+<div class="card">
+  <h2>Pregunta 4 <span class="pts">(3 puntos)</span></h2>
+  <p>Usted es el ingeniero de transmisión responsable de diseñar el enlace entre el Site Lima y el Site Chilca, separados por 60 km. El enlace transportará tráfico de agregación metropolitana. Debe decidir si basta con un detector PIN o si se requiere un APD.</p>
+  <ul class="datos">
+    <li>Atenuación de la fibra G.652D a 1550 nm: 0.25 dB/km</li>
+    <li>Potencia de transmisión del láser DFB: +4 dBm</li>
+    <li>Conectores: 6 × 0.5 dB · Empalmes: 14 × 0.1 dB</li>
+    <li>Pérdidas adicionales (ODF y patch cords): 1.5 dB · Margen de ingeniería: 3 dB</li>
+    <li>Sensibilidad PIN: −24 dBm · Sensibilidad APD: −30 dBm</li>
+  </ul>
+  <div class="formtitle">Fórmulas aplicables</div>
+<pre>L_fibra   = α × d
+L_total   = L_fibra + L_conectores + L_empalmes + L_adicionales + Margen
+Prx       = Ptx − L_total
+Margen_Rx = Prx − Sensibilidad_Rx</pre>
+  <div class="box"><div class="bt">Desarrollo detallado <span>(1 punto)</span></div><textarea class="lg" data-k="p4_des"></textarea></div>
+  <div class="box"><div class="bt">Interpretación técnica correcta <span>(1 punto)</span></div><textarea data-k="p4_int"></textarea></div>
+  <div class="box"><div class="bt">Consecuencia de una interpretación errada <span>(1 punto)</span></div><textarea data-k="p4_con"></textarea></div>
+</div>
+
+<!-- P5 -->
+<div class="card">
+  <h2>Problema 5 <span class="pts">(4 puntos)</span></h2>
+  <p>Usted es el ingeniero de acceso óptico de un ISP y diseña una red GPON clase B+ en Lurín. La ONT más lejana está a 12 km de la OLT. Cada trayectoria tiene 4 conectores y 8 empalmes. El área comercial quiere usar un splitter 1:64 en lugar de 1:32 para atender más abonados con un solo puerto. Para la clase B+ se usa un rango de pérdida de trayectoria de 13 a 28 dB, y el proyecto exige 3 dB de reserva respecto del techo de 28 dB en <strong>ambos sentidos</strong>.</p>
+  <ul class="datos">
+    <li>Atenuación a 1310 nm (ascendente): 0.35 dB/km · a 1490 nm (descendente): 0.25 dB/km</li>
+    <li>Pérdida por conector: 0.5 dB · por empalme: 0.1 dB</li>
+    <li>Splitter 1:32: 17 dB · Splitter 1:64: 20.5 dB</li>
+  </ul>
+  <div class="formtitle">Fórmulas de referencia</div>
+<pre>A          = α × L + n_c × a_c + n_e × a_e + A_splitter
+Reserva    = 28 − A        (se exige Reserva ≥ 3 dB)
+Condición mínima: A ≥ 13 dB
+ΔA_reducir = A − 25</pre>
+  <div class="box"><div class="bt">Desarrollo <span>(1.5 puntos): pérdida ascendente y descendente con 1:32 y con 1:64, y la reserva de cada caso</span></div><textarea class="lg" data-k="p5_des"></textarea></div>
+  <div class="box"><div class="bt">Interpretación técnica <span>(1 punto): ¿qué splitter es admisible y qué sentido es el restrictivo?</span></div><textarea data-k="p5_int"></textarea></div>
+  <div class="box"><div class="bt">Mencione 2 conclusiones <span>(1.5 puntos), incluyendo cuántos dB habría que reducir para que el 1:64 cumpla</span></div><textarea data-k="p5_con"></textarea></div>
+</div>
+
+<!-- P6 -->
+<div class="card">
+  <h2>Problema 6 <span class="pts">(5 puntos)</span></h2>
+  <p>Usted es el ingeniero de operación de un enlace metropolitano corto entre dos nodos de un mismo distrito. El receptor instalado es un <strong>APD</strong>. Según la ficha técnica, el transmisor garantiza una potencia <strong>entre 0 y +3 dBm</strong>, y la pérdida del canal varía <strong>entre 6 y 8 dB</strong> según el estado de los conectores y la temperatura. El APD tiene una sensibilidad de <strong>−28 dBm</strong> y una sobrecarga de <strong>−8 dBm</strong>. Se exigen 3 dB de reserva frente a la sensibilidad.</p>
+  <p>En el almacén hay atenuadores fijos de <strong>3, 6, 10 y 18 dB</strong>, cada uno con una tolerancia de <strong>±0.5 dB</strong>. Determine si hace falta un atenuador y cuál debe instalarse.</p>
+  <div class="formtitle">Condiciones asumidas por criterio de ingeniería</div>
+  <ul class="datos">
+    <li>La sobrecarga se evalúa con la potencia máxima del transmisor, la pérdida mínima del canal y la atenuación mínima real del atenuador.</li>
+    <li>La reserva se evalúa con la potencia mínima del transmisor, la pérdida máxima del canal y la atenuación máxima real del atenuador.</li>
+  </ul>
+  <div class="formtitle">Fórmulas aplicables</div>
+<pre>Prx_max = Ptx_max − A_canal,min − (a − 0.5)  ≤  O_Rx
+Prx_min = Ptx_min − A_canal,max − (a + 0.5)  ≥  S_Rx + 3
+H (separación de sobrecarga) = O_Rx − Prx_max
+M (reserva)                  = Prx_min − S_Rx</pre>
+  <div class="box"><div class="bt">Desarrollo detallado <span>(1.5 puntos): verifique el enlace sin atenuador y obtenga el intervalo admisible de atenuación</span></div><textarea class="lg" data-k="p6_des"></textarea></div>
+  <div class="box"><div class="bt">Resultado <span>(0.5 puntos)</span></div>
+    <div class="inline">Se debe instalar un atenuador fijo de: <input type="text" data-k="p6_res"> dB</div></div>
+  <div class="box"><div class="bt">Interpretación técnica correcta <span>(1.5 puntos)</span></div><textarea data-k="p6_int"></textarea></div>
+  <div class="box"><div class="bt">Consecuencia de una interpretación errada <span>(1.5 puntos)</span></div><textarea data-k="p6_con"></textarea></div>
+</div>
+
+<!-- P7 -->
+<div class="card">
+  <h2>Problema 7 <span class="pts">(5 puntos)</span></h2>
+  <p>Usted es el jefe de proyecto de transporte óptico y diseña una red DWDM de 10 Gb/s NRZ entre Lima e Ica, con una distancia óptica de <strong>300 km</strong> sobre fibra G.652D a 1550 nm.</p>
+  <ul class="datos">
+    <li>Atenuación de la fibra: 0.22 dB/km</li>
+    <li>Pérdidas adicionales (conectores, empalmes, ODF y reservas): 12 dB · Margen de ingeniería: 3 dB</li>
+    <li>Ganancia nominal de cada EDFA: 22 dB · NF del EDFA: 5 dB · OSNR mínimo requerido: 17 dB</li>
+    <li>Dispersión cromática: D = 17 ps/(nm·km) · Ancho espectral efectivo: Δλ = 0.10 nm</li>
+    <li>Tiempo equivalente del transmisor: 25 ps · del receptor: 30 ps</li>
+  </ul>
+  <div class="formtitle">Fórmulas de referencia</div>
+<pre>L_fibra     = α × d
+L_total     = L_fibra + L_adicionales + Margen
+N_EDFA      = L_total / G_EDFA
+OSNR_diseño = OSNR_mínimo + Margen
+t_CD        = |D| × Δλ × L
+t_sis       = √( t_Tx² + t_Rx² + t_CD² )  ≤  0.7 × T_b ,   T_b = 1 / R_b</pre>
+  <div class="formtitle">Se solicita</div>
+  <ol>
+    <li>Calcular la pérdida de la fibra.</li>
+    <li>Determinar la pérdida total del enlace.</li>
+    <li>Calcular el número aproximado de EDFAs.</li>
+    <li>Calcular el OSNR de diseño y verificar el criterio de dispersión. Analizar si los EDFAs resuelven todo el problema.</li>
+  </ol>
+  <div class="box"><div class="bt">1. Pérdida de la fibra e interpretación <span>(1 punto)</span></div><textarea data-k="p7_1"></textarea></div>
+  <div class="box"><div class="bt">2. Pérdida total del enlace e interpretación <span>(1 punto)</span></div><textarea data-k="p7_2"></textarea></div>
+  <div class="box"><div class="bt">3. Número aproximado de EDFAs e interpretación <span>(1 punto)</span></div><textarea data-k="p7_3"></textarea></div>
+  <div class="box"><div class="bt">4. OSNR de diseño, dispersión e interpretación <span>(2 puntos)</span></div><textarea class="lg" data-k="p7_4"></textarea></div>
+</div>
+
+<!-- Solucionario -->
+<div id="sol" class="sol">
+  <div class="card">
+    <h2>Solucionario — Preguntas 1 a 3</h2>
+    <p id="mcqscore"></p>
+    <p><strong>P1: B.</strong> La decisión se toma por presupuesto óptico, no por la "regla de 40 km". El PIN cumple con 4.1 dB después de incluir el margen; el APD es sobrecosto.<br>
+    <strong>P2: C.</strong> A 1310 nm la fibra atenúa más, así que el ascendente acumula más pérdida y es el restrictivo.<br>
+    <strong>P3: C.</strong> La sensibilidad o la potencia no corrigen el ensanchamiento del pulso; hay que atacar la dispersión y volver a medir la BER.</p>
+  </div>
+  <div class="card">
+    <h2>Solucionario — Pregunta 4</h2>
+<pre>L_fibra   = 0.25 × 60 = 15 dB
+L_con     = 6 × 0.5   = 3 dB
+L_emp     = 14 × 0.1  = 1.4 dB
+L_total   = 15 + 3 + 1.4 + 1.5 + 3 = 23.9 dB
+Prx       = +4 − 23.9 = −19.9 dBm
+Margen_PIN = −19.9 − (−24) = 4.1 dB  → cumple
+Margen_APD = −19.9 − (−30) = 10.1 dB → cumple, pero innecesario</pre>
+    <p><strong>Interpretación:</strong> el enlace de 60 km funciona con G.652D + láser DFB + PIN, que deja 4.1 dB por encima de la sensibilidad con el margen de ingeniería ya incluido. El APD no se justifica técnica ni económicamente.</p>
+    <p><strong>Consecuencia errada:</strong> aplicar mecánicamente "más de 40 km = APD" lleva a sobredimensionar: mayor costo, polarización adicional y complejidad sin beneficio. Al revés, olvidar conectores, empalmes o margen y sumar solo los 15 dB de la fibra daría un diseño falsamente holgado.</p>
+  </div>
+  <div class="card">
+    <h2>Solucionario — Problema 5</h2>
+<pre>Pérdidas fijas = 4(0.5) + 8(0.1) = 2.8 dB
+Fibra ↑ (1310) = 0.35 × 12 = 4.2 dB     Fibra ↓ (1490) = 0.25 × 12 = 3.0 dB
+
+1:32  A↑ = 4.2 + 2.8 + 17   = 24.0 dB → Reserva = 4.0 dB  ✔
+      A↓ = 3.0 + 2.8 + 17   = 22.8 dB → Reserva = 5.2 dB  ✔
+1:64  A↑ = 4.2 + 2.8 + 20.5 = 27.5 dB → Reserva = 0.5 dB  ✘
+      A↓ = 3.0 + 2.8 + 20.5 = 26.3 dB → Reserva = 1.7 dB  ✘
+Todos ≥ 13 dB (no hay problema de pérdida mínima).
+Reducción para 1:64: ΔA↑ = 27.5 − 25 = 2.5 dB  (ΔA↓ = 1.3 dB)</pre>
+    <p><strong>Interpretación:</strong> solo el 1:32 es admisible. El ascendente (1310 nm) es el sentido restrictivo. Aunque el 1:64 está por debajo de 28 dB, no conserva la reserva de 3 dB.</p>
+    <p><strong>Conclusiones:</strong> (1) Se recomiendan 2 puertos OLT con splitter 1:32 para los 64 abonados. (2) Para usar 1:64 habría que reducir al menos 2.5 dB en ascendente (menos conectores o empalmes, o acortar la trayectoria), algo poco realista a 12 km. (3) Siempre hay que evaluar ambos sentidos; en GPON la pérdida dominante es el splitter.</p>
+  </div>
+  <div class="card">
+    <h2>Solucionario — Problema 6</h2>
+<pre>Sin atenuador:
+Prx_max = 3 − 6 = −3 dBm  > −8 dBm → SOBRECARGA (5 dB por encima)
+Prx_min = 0 − 8 = −8 dBm  → M = −8 − (−28) = 20 dB
+
+Intervalo:
+a − 0.5 ≥ 3 − 6 − (−8) = 5          → a ≥ 5.5 dB
+a + 0.5 ≤ 0 − 8 − (−28) − 3 = 17    → a ≤ 16.5 dB
+Admisible: 5.5 ≤ a ≤ 16.5 dB
+
+3 dB  → ✘ sigue en sobrecarga (Prx_max = −0.5 dBm)
+6 dB  → ✔ pero H = −8 − (3 − 6 − 5.5) = 0.5 dB (al límite)
+10 dB → ✔ Prx_max = 3 − 6 − 9.5 = −12.5 dBm → H = 4.5 dB
+          Prx_min = 0 − 8 − 10.5 = −18.5 dBm → M = 9.5 dB
+18 dB → ✘ Prx_min = 0 − 8 − 18.5 = −26.5 dBm → M = 1.5 dB &lt; 3</pre>
+    <p><strong>Resultado:</strong> atenuador fijo de <strong>10 dB</strong>.</p>
+    <p><strong>Interpretación:</strong> el problema es exceso de potencia, no falta. Con 10 dB el APD queda lejos de la sobrecarga (4.5 dB) y con reserva amplia (9.5 dB) en los dos extremos, incluida la tolerancia. El de 6 dB cumple matemáticamente, pero deja solo 0.5 dB frente a la sobrecarga.</p>
+    <p><strong>Consecuencia errada:</strong> pensar que "más potencia es mejor" o que "el APD es más sensible y por tanto mejor" deja el receptor saturado: errores de bit, pérdidas intermitentes y diagnósticos erróneos (la potencia parece buena pero la calidad es mala). Elegir 18 dB por exceso de precaución sacrificaría la reserva exigida.</p>
+  </div>
+  <div class="card">
+    <h2>Solucionario — Problema 7</h2>
+<pre>1. L_fibra = 0.22 × 300 = 66 dB
+2. L_total = 66 + 12 + 3 = 81 dB
+3. N = 81 / 22 = 3.68 ≈ 4 EDFAs
+4. OSNR_diseño = 17 + 3 = 20 dB
+   T_b = 1 / 10 Gb/s = 100 ps → límite = 0.7 × 100 = 70 ps
+   t_CD  = 17 × 0.10 × 300 = 510 ps
+   t_sis = √(25² + 30² + 510²) = √261625 ≈ 511.5 ps  &gt;&gt; 70 ps ✘</pre>
+    <p><strong>Interpretación 1–2:</strong> la fibra sola aporta 66 dB; con las pérdidas extrínsecas y el margen, el diseño debe cubrir 81 dB.</p>
+    <p><strong>Interpretación 3:</strong> se necesitan unos 4 EDFAs para compensar la potencia. Es un valor aproximado que depende de la ubicación real de los sitios y de la evaluación en campo.</p>
+    <p><strong>Interpretación 4:</strong> el OSNR de diseño debe ser al menos 20 dB, y cada EDFA agrega ruido ASE que degrada el OSNR acumulado (una opción híbrida EDFA + Raman ayudaría). Además, el enlace <strong>incumple el criterio de dispersión</strong>: los EDFAs solo recuperan potencia y no corrigen el ensanchamiento del pulso. Hace falta compensar la dispersión (DCM o FBG), usar fibra o emisor de menor dispersión, transmisión coherente o regeneración 3R. Validar con OSNR y BER.</p>
+  </div>
+</div>
+
+<p class="note noprint" style="text-align:center;margin:24px 0">Simulacro elaborado con el formato de la PC03 de ciclos anteriores.</p>
+</div>
+
+<script>
+(function(){
+  var KEY='simulacro_pc03_v1', state={};
+  function load(){try{state=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){state={}}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));var s=document.getElementById('saved');s.textContent='Guardado '+new Date().toLocaleTimeString();}catch(e){}}
+  load();
+  document.querySelectorAll('[data-k]').forEach(function(el){
+    var k=el.dataset.k; if(state[k]!=null) el.value=state[k];
+    el.addEventListener('input',function(){state[k]=el.value;save();});
+  });
+  ['q1','q2','q3'].forEach(function(q){
+    document.querySelectorAll('input[name='+q+']').forEach(function(r){
+      if(state[q]===r.value) r.checked=true;
+      r.addEventListener('change',function(){state[q]=r.value;save();});
+    });
+  });
+  document.querySelectorAll('[data-clear]').forEach(function(b){
+    b.addEventListener('click',function(){var q=b.dataset.clear;
+      document.querySelectorAll('input[name='+q+']').forEach(function(r){r.checked=false});
+      delete state[q];save();});
+  });
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('¿Borrar todas tus respuestas?'))return;
+    state={};try{localStorage.removeItem(KEY)}catch(e){}
+    document.querySelectorAll('[data-k]').forEach(function(el){el.value=''});
+    document.querySelectorAll('input[type=radio]').forEach(function(r){r.checked=false});
+  });
+  // MCQ score
+  function score(){
+    var key={q1:'B',q2:'C',q3:'C'},t=0,d=[];
+    for(var q in key){ if(!state[q]){d.push(q.toUpperCase()+': en blanco (0)');}
+      else if(state[q]===key[q]){t+=1;d.push(q.toUpperCase()+': '+state[q]+' ✔ (+1)');}
+      else{t-=0.5;d.push(q.toUpperCase()+': '+state[q]+' ✘ (−0.5)');} }
+    document.getElementById('mcqscore').innerHTML='<strong>Tu puntaje en P1–P3: '+t+' / 3</strong><br>'+d.join(' · ');
+  }
+  var sol=document.getElementById('sol'),sb=document.getElementById('showsol');
+  sb.addEventListener('click',function(){
+    if(sol.classList.contains('show')){sol.classList.remove('show');sb.textContent='Ver solucionario';return;}
+    if(!confirm('¿Ya terminaste? El solucionario muestra todas las respuestas.'))return;
+    score();sol.classList.add('show');sb.textContent='Ocultar solucionario';sol.scrollIntoView({behavior:'smooth'});
+  });
+  // Timer
+  var total=90*60,left=total,iv=null,tb=document.getElementById('tbtn'),te=document.getElementById('timer');
+  function fmt(s){var m=Math.floor(s/60),x=s%60;return (m<10?'0':'')+m+':'+(x<10?'0':'')+x;}
+  tb.addEventListener('click',function(){
+    if(iv){clearInterval(iv);iv=null;tb.textContent='Reanudar';return;}
+    tb.textContent='Pausar';
+    iv=setInterval(function(){left--;te.textContent=fmt(Math.max(left,0));
+      if(left<=0){clearInterval(iv);iv=null;tb.textContent='Tiempo terminado';te.style.color='var(--accent)';alert('¡Se acabó el tiempo!');}},1000);
+  });
+  // Theme
+  document.getElementById('theme').addEventListener('click',function(){
+    var r=document.documentElement,cur=r.getAttribute('data-theme');
+    var dark=cur?cur==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+    r.setAttribute('data-theme',dark?'light':'dark');
+  });
+})();
+</script>
+</body>
+</html>
